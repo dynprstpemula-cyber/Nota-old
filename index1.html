@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bengkel Honda - Nota Servis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #e60000;
+      --primary-light: #ff2a2a;
+      --primary-dark: #9e0000;
+      --bg-app: #ffffff;
+      --text-main: #111111;
+    }
+
+    /* TEMA WARNA */
+    body.theme-cyan {
+      --primary: #00b8c4;
+      --primary-light: #1ce3f0;
+      --primary-dark: #00767d;
+    }
+    body.theme-green {
+      --primary: #00c81b;
+      --primary-light: #1ce838;
+      --primary-dark: #007d11;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Fredoka', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #18181b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* CONTAINER UTAMA RASIO 9:16 */
+    .app-frame {
+      width: 100%;
+      max-width: 412px;
+      height: 100vh;
+      max-height: 850px;
+      aspect-ratio: 9 / 16;
+      background-color: var(--bg-app);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease;
+    }
+
+    /* ANIMASI KLIK GLOBAL */
+    .btn-anim {
+      cursor: pointer;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
+    }
+    .btn-anim:hover {
+      filter: brightness(1.06);
+      transform: translateY(-2px);
+    }
+    .btn-anim:active {
+      transform: scale(0.92);
+    }
+
+    /* ORNAMEN SUDUT KANAN ATAS */
+    .top-corner-graphic {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 280px;
+      height: 110px;
+      z-index: 20;
+      pointer-events: none;
+    }
+    .top-corner-graphic path {
+      fill: var(--primary);
+      transition: fill 0.3s ease;
+    }
+
+    /* GARIS PANJANG SCROLL DI SISI KIRI */
+    .left-scroll-track {
+      position: absolute;
+      left: 10px;
+      top: 12px;
+      bottom: 108px;
+      width: 18px;
+      border: 2px solid var(--primary);
+      border-radius: 20px;
+      background: #fff;
+      z-index: 25;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+    }
+    .left-scroll-track.full-height {
+      bottom: 20px;
+    }
+    .left-scroll-thumb {
+      position: absolute;
+      top: 0;
+      left: -1px;
+      width: 16px;
+      height: 55%;
+      background-color: var(--primary);
+      border-radius: 20px;
+      transition: background-color 0.3s ease, top 0.08s linear;
+      cursor: grab;
+    }
+    .left-scroll-thumb:active {
+      cursor: grabbing;
+    }
+
+    /* ================= HALAMAN 1: BERANDA ================= */
+    .view {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .view.active {
+      display: flex;
+      animation: fadeSlideIn 0.28s ease forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SEARCH BAR DIAM DI BERANDA */
+    .home-header {
+      padding: 68px 28px 14px 44px;
+      z-index: 15;
+      background: transparent;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      border: 2.5px solid var(--primary-dark);
+      border-radius: 30px;
+      padding: 8px 16px;
+      background: #fff;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: border-color 0.3s ease;
+    }
+    .search-box svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--primary-dark);
+      flex-shrink: 0;
+    }
+    .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .search-box input::placeholder {
+      color: var(--primary);
+      opacity: 0.45;
+    }
+
+    /* AREA SCROLL PROYEK DI BERANDA */
+    .projects-scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 24px 125px 44px;
+      scrollbar-width: none;
+    }
+    .projects-scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .project-item {
+      margin-bottom: 24px;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.94); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* HEADER PROYEK (PILL + TOMBOL RENAME/DELETE) */
+    .project-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 6px;
+    }
+    .project-pill-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
+    .project-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      flex-shrink: 0;
+      z-index: 2;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.15);
+    }
+    .project-pill {
+      background-color: var(--primary-light);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 6px 16px 6px 22px;
+      border-radius: 0 20px 20px 0;
+      margin-left: -14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .project-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .btn-mini {
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* KARTU MINI PREVIEW NOTA */
+    .nota-preview-card {
+      border: 2.5px solid var(--primary-dark);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+    .nota-preview-card::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 38px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.96));
+      pointer-events: none;
+    }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 95px;
+      gap: 6px;
+      padding-right: 6px;
+    }
+    .preview-banner {
+      background-color: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 5px 10px 5px 52px;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+    .wing-decor {
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      width: 44px;
+      height: 34px;
+      fill: #fff;
+      stroke: var(--primary);
+      stroke-width: 1.5;
+    }
+    .preview-subbanner {
+      background-color: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 6px 0 6px 8px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .preview-subbanner span.line {
+      height: 1.5px;
+      background: #fff;
+      flex: 1;
+    }
+    .preview-customer {
+      padding: 2px 10px 14px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .preview-customer .title-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .preview-customer .txt-red {
+      color: var(--primary);
+    }
+    .preview-customer .box-dark {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 1px 6px;
+    }
+    .preview-customer .nama-row {
+      color: #b0b0b0;
+      font-size: 11px;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* TABEL MINI DI KANAN KARTU BERANDA */
+    .preview-mini-table {
+      background: var(--primary);
+      margin-top: 4px;
+      border-radius: 6px 6px 0 0;
+      padding: 2px;
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 2px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .preview-mini-table div {
+      background: #fff;
+      color: var(--primary);
+      text-align: center;
+      padding: 2px;
+      border-radius: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* NAVBAR BAWAH (DIAM DI BERANDA) */
+    .bottom-navbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background-color: var(--primary-dark);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 18px;
+      z-index: 30;
+      transition: background-color 0.3s ease;
+    }
+    .nav-btn {
+      width: 72px;
+      height: 68px;
+      background-color: var(--primary);
+      border-radius: 14px;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.35);
+      transition: background-color 0.3s ease, transform 0.18s ease;
+    }
+    .nav-btn svg {
+      width: 38px;
+      height: 38px;
+    }
+
+    /* ================= MODAL BLUR (GAMBAR 2, 3, 4, 5) ================= */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeBlur 0.25s ease forwards;
+    }
+    @keyframes fadeBlur {
+      from { opacity: 0; backdrop-filter: blur(0px); }
+      to { opacity: 1; backdrop-filter: blur(10px); }
+    }
+
+    /* GAMBAR 2: SETTINGS PILIH TEMA WARNA */
+    .theme-modal-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .btn-back-pill {
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 6px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .theme-selector-bar {
+      display: flex;
+      align-items: center;
+      border: 2.5px solid var(--primary);
+      border-radius: 40px;
+      background: #fff;
+      padding: 6px 20px 6px 6px;
+      gap: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+    .theme-indicator-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      transition: background-color 0.3s ease;
+    }
+    .color-swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
+      border: none;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.18);
+    }
+
+    /* GAMBAR 3, 4, 5: DIALOG PILL DENGAN LINGKARAN */
+    .dialog-pill-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 280px;
+    }
+    .pill-input-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .pill-main-bar {
+      width: 100%;
+      background-color: var(--primary-light);
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+    .pill-main-bar input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .pill-main-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.85);
+    }
+    .circle-badge-right {
+      position: absolute;
+      right: -12px;
+      top: -18px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+    .circle-badge-left {
+      position: absolute;
+      left: -14px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      pointer-events: none;
+    }
+    .btn-yes-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 2.5px solid var(--primary);
+      border-radius: 25px;
+      padding: 4px 36px;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .dialog-sub-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-cancel-text {
+      background: rgba(255,255,255,0.85);
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ================= GAMBAR 6 & 7: FORM INPUT NOTA ================= */
+    .form-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 68px 26px 40px 46px;
+      scrollbar-width: none;
+    }
+    .form-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .form-group-pill {
+      margin-bottom: 18px;
+    }
+    .form-label-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .label-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      flex-shrink: 0;
+      z-index: 2;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    }
+    .label-pill {
+      flex: 1;
+      background-color: var(--primary-light);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 11px 18px 11px 28px;
+      border-radius: 0 14px 14px 0;
+      margin-left: -18px;
+    }
+    .form-input-box {
+      width: calc(100% - 34px);
+      margin-left: 34px;
+      border: 2px solid var(--primary-dark);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      outline: none;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      resize: vertical;
+    }
+    .form-input-box:focus {
+      box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.15);
+    }
+    .form-input-box::placeholder {
+      color: #c2c2c2;
+    }
+
+    .form-bottom-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 26px;
+      gap: 12px;
+    }
+    .btn-ttd-solid {
+      flex: 1;
+      background-color: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .btn-pdf-outline {
+      flex: 1;
+      background-color: #fff;
+      color: var(--primary);
+      border: 2.5px solid var(--primary);
+      border-radius: 25px;
+      padding: 8px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* ================= GAMBAR 8: HALAMAN TANDA TANGAN ================= */
+    .ttd-view-content {
+      flex: 1;
+      padding: 62px 24px 24px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .ttd-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ttd-canvas-box {
+      width: 100%;
+      height: 195px;
+      border: 2px solid var(--primary-dark);
+      border-radius: 12px;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+      touch-action: none;
+    }
+    .ttd-canvas-box canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+    .btn-clear-ttd {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .ttd-footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    /* ================= GAMBAR 9: PREVIEW & CETAK PDF (9:16) ================= */
+    .pdf-view-wrapper {
+      flex: 1;
+      background: #f4f4f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+      overflow-y: auto;
+    }
+    /* KERTAS NOTA RASIO 9:16 PANJANG */
+    #nota-pdf-sheet {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 9 / 16;
+      background: #ffffff;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .pdf-header-box {
+      background-color: var(--primary);
+      color: #fff;
+      text-align: center;
+      font-size: 21px;
+      font-weight: 700;
+      padding: 9px;
+      letter-spacing: 1px;
+      box-shadow: 6px 6px 0px #000000;
+      margin-bottom: 12px;
+    }
+    .pdf-sub-pill {
+      background-color: var(--primary);
+      color: #fff;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 5px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .pdf-customer-block {
+      margin-bottom: 10px;
+      padding-left: 8px;
+    }
+    .pdf-cust-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .pdf-cust-title .outline-txt {
+      color: #fff;
+      -webkit-text-stroke: 1.2px var(--primary);
+      text-shadow: 1px 1px 0 var(--primary);
+    }
+    .pdf-cust-title .solid-box {
+      background-color: var(--primary);
+      color: #fff;
+      padding: 2px 8px;
+    }
+    .pdf-info-line {
+      display: grid;
+      grid-template-columns: 98px 10px 1fr;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      word-break: break-word;
+    }
+    .pdf-info-line.red-label .lbl {
+      color: var(--primary);
+    }
+
+    /* TABEL NOTA PANJANG (GAMBAR 9) - RESPONSIF UNTUK KALIMAT PANJANG */
+    .pdf-table-container {
+      background-color: var(--primary);
+      padding: 5px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+      min-height: 0;
+    }
+    .pdf-table-grid {
+      display: grid;
+      grid-template-columns: 26px 1fr 34px 52px 56px;
+      gap: 4px;
+      flex: 1;
+      min-height: 0;
+    }
+    .pdf-th {
+      background: #fff;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 10.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4px 2px;
+      line-height: 1.1;
+    }
+    .pdf-no-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .pdf-no-cell {
+      flex: 1;
+      background: #fff;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pdf-uraian-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+    .pdf-uraian-cell {
+      flex: 1;
+      background: #fff;
+      color: #111;
+      font-weight: 600;
+      font-size: 10.5px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      padding: 3px 6px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
+      overflow: hidden;
+    }
+    /* Penyesuaian ukuran font otomatis jika kalimat uraian panjang */
+    .pdf-uraian-cell.text-medium {
+      font-size: 9px;
+      line-height: 1.12;
+      padding: 2px 5px;
+    }
+    .pdf-uraian-cell.text-long {
+      font-size: 7.8px;
+      line-height: 1.08;
+      padding: 2px 4px;
+    }
+
+    .pdf-tall-col {
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-size: 10.5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px 2px 2px;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .pdf-summary-row {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 4px;
+    }
+    .pdf-sum-box {
+      background: #fff;
+      padding: 5px 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .pdf-sum-line {
+      display: flex;
+      justify-content: space-between;
+    }
+    .pdf-total-box {
+      background: #fff;
+      padding: 5px 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* TANDA TANGAN BAWAH DI PDF */
+    .pdf-signatures-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 6px;
+    }
+    .pdf-sig-box {
+      flex: 1;
+      text-align: center;
+    }
+    .pdf-sig-img-wrap {
+      height: 54px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      border-bottom: 2px solid var(--primary);
+      margin-bottom: 4px;
+    }
+    .pdf-sig-img-wrap img {
+      max-height: 50px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    .pdf-sig-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .pdf-toolbar {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 360px;
+      margin-top: 10px;
+    }
+
+    /* TOAST NOTIFIKASI PROSES PDF */
+    .pdf-toast {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--primary-dark);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      z-index: 100;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .pdf-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-frame" id="appFrame">
+    <!-- NOTIFIKASI PDF -->
+    <div class="pdf-toast" id="pdfToast">Mengunduh PDF Nota Servis...</div>
+
+    <!-- ORNAMEN SUDUT KANAN ATAS -->
+    <svg class="top-corner-graphic" id="topCornerDecor" viewBox="0 0 300 120" preserveAspectRatio="none">
+      <path d="M55,0 L300,0 L300,115 L268,115 L254,92 L180,55 L195,68 L72,48 Z" />
+      <polygon points="242,40 278,68 300,50 300,34 276,52" fill="#ffffff" />
+    </svg>
+
+    <!-- GARIS SCROLL KIRI -->
+    <div class="left-scroll-track" id="leftScrollTrack">
+      <div class="left-scroll-thumb" id="leftScrollThumb"></div>
+    </div>
+
+    <!-- ================= VIEW 1: BERANDA (GAMBAR 1) ================= -->
+    <div class="view active" id="viewHome">
+      <div class="home-header">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="look for your note..." oninput="renderProjects()" />
+        </div>
+      </div>
+
+      <div class="projects-scroll-area" id="homeScrollArea">
+        <!-- Daftar Proyek Di-render di sini -->
+      </div>
+
+      <!-- NAVBAR BAWAH DIAM -->
+      <div class="bottom-navbar">
+        <!-- LOGO RUMAH (RESTART) -->
+        <button class="nav-btn btn-anim" onclick="restartApp()" title="Restart Beranda">
+          <svg viewBox="0 0 24 24" fill="#ffffff">
+            <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3L12 3z" />
+          </svg>
+        </button>
+
+        <!-- LOGO SETTINGS (GAMBAR 2) -->
+        <button class="nav-btn btn-anim" onclick="openModal('modalSettings')" title="Pengaturan Tema">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+
+        <!-- LOGO TAMBAH (GAMBAR 3) -->
+        <button class="nav-btn btn-anim" onclick="openCreateModal()" title="Buat Proyek Baru">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2">
+            <path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 2: FORM INPUT NOTA (GAMBAR 6 & 7) ================= -->
+    <div class="view" id="viewForm">
+      <div class="form-scroll-container" id="formScrollArea">
+        <!-- BAGIAN GAMBAR 6 -->
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Nama anda :</div>
+          </div>
+          <input type="text" class="form-input-box" id="inpNama" placeholder="masukkan nama anda" oninput="syncFormData()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">No.polisi :</div>
+          </div>
+          <input type="text" class="form-input-box" id="inpNopol" placeholder="Contoh: Z 1234 AB" oninput="syncFormData()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Jenis motor :</div>
+          </div>
+          <input type="text" class="form-input-box" id="inpMotor" placeholder="Contoh: Vario 160 / Beat" oninput="syncFormData()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Uraian pekerjaan :</div>
+          </div>
+          <textarea rows="2" class="form-input-box" id="inpUraian" placeholder="Tulis uraian pekerjaan (pisahkan koma atau baris baru untuk tiap nomor)" oninput="syncFormData()"></textarea>
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">QTY :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpQty" placeholder="1" oninput="calculateNota()" />
+        </div>
+
+        <!-- BAGIAN GAMBAR 7 (DI-SCROLL KE BAWAH) -->
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Harga satuan :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpHarga" placeholder="masukkan harga satuan" oninput="calculateNota()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Jumlah :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpJumlah" placeholder="Otomatis / isi manual" oninput="calculateNota(true)" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Sub total :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpSubtotal" placeholder="0" oninput="calculateTotalOnly()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Diskon :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpDiskon" placeholder="0" oninput="calculateTotalOnly()" />
+        </div>
+
+        <div class="form-group-pill">
+          <div class="form-label-row">
+            <div class="label-circle"></div>
+            <div class="label-pill">Total :</div>
+          </div>
+          <input type="number" class="form-input-box" id="inpTotal" placeholder="0" readonly />
+        </div>
+
+        <!-- TOMBOL BAWAH GAMBAR 7 -->
+        <div class="form-bottom-buttons">
+          <button class="btn-ttd-solid btn-anim" onclick="switchView('viewSignature')">Tanda tangan</button>
+          <button class="btn-pdf-outline btn-anim" onclick="triggerDirectPdf()">Cetak PDF</button>
+        </div>
+
+        <div style="margin-top: 14px; text-align: center;">
+          <button class="btn-cancel-text btn-anim" onclick="switchView('viewHome')">← Simpan & Kembali ke Beranda</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 3: TANDA TANGAN (GAMBAR 8) ================= -->
+    <div class="view" id="viewSignature">
+      <div class="ttd-view-content">
+        <div class="ttd-section">
+          <div class="form-label-row" style="margin-bottom: 4px;">
+            <div class="label-circle"></div>
+            <div class="label-pill">Ttd pelanggan :</div>
+          </div>
+          <div class="ttd-canvas-box">
+            <canvas id="canvasPelanggan"></canvas>
+            <button class="btn-clear-ttd btn-anim" onclick="clearCanvas('canvasPelanggan')">Hapus</button>
+          </div>
+        </div>
+
+        <div class="ttd-section">
+          <div class="form-label-row" style="margin-bottom: 4px;">
+            <div class="label-circle"></div>
+            <div class="label-pill">Ttd. kasir :</div>
+          </div>
+          <div class="ttd-canvas-box">
+            <canvas id="canvasKasir"></canvas>
+            <button class="btn-clear-ttd btn-anim" onclick="clearCanvas('canvasKasir')">Hapus</button>
+          </div>
+        </div>
+
+        <div class="ttd-footer-actions">
+          <button class="btn-cancel-text btn-anim" onclick="switchView('viewForm')">← Kembali</button>
+          <button class="btn-pdf-outline btn-anim" style="max-width: 165px;" onclick="saveSignaturesAndDirectPdf()">Cetak PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= VIEW 4: TABEL PDF 9:16 (GAMBAR 9) ================= -->
+    <div class="view" id="viewPdf">
+      <div class="pdf-view-wrapper">
+        <div id="nota-pdf-sheet">
+          <div>
+            <div class="pdf-header-box">BENGKEL HONDA</div>
+            <div class="pdf-sub-pill">Nota Servis</div>
+
+            <div class="pdf-customer-block">
+              <div class="pdf-cust-title">
+                <span class="outline-txt">Data</span>
+                <span class="solid-box">Pelanggan</span>
+              </div>
+              <div class="pdf-info-line">
+                <span class="lbl">Nama</span><span>:</span><span id="pdfNama">-</span>
+              </div>
+              <div class="pdf-info-line red-label">
+                <span class="lbl">No. polisi</span><span>:</span><span id="pdfNopol">-</span>
+              </div>
+              <div class="pdf-info-line">
+                <span class="lbl">Jenis Motor</span><span>:</span><span id="pdfMotor">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TABEL NOTA PANJANG -->
+          <div class="pdf-table-container">
+            <div class="pdf-table-grid">
+              <!-- KOLOM NO -->
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <div class="pdf-th" style="height:34px;">NO</div>
+                <div class="pdf-no-col" id="pdfNoList">
+                  <div class="pdf-no-cell">1</div>
+                  <div class="pdf-no-cell">2</div>
+                  <div class="pdf-no-cell">3</div>
+                  <div class="pdf-no-cell">4</div>
+                  <div class="pdf-no-cell">5</div>
+                </div>
+              </div>
+
+              <!-- KOLOM URAIAN PEKERJAAN -->
+              <div style="display:flex; flex-direction:column; gap:4px; min-width:0;">
+                <div class="pdf-th" style="height:34px;">Uraian Pekerjaan</div>
+                <div class="pdf-uraian-col" id="pdfUraianList">
+                  <div class="pdf-uraian-cell"></div>
+                  <div class="pdf-uraian-cell"></div>
+                  <div class="pdf-uraian-cell"></div>
+                  <div class="pdf-uraian-cell"></div>
+                  <div class="pdf-uraian-cell"></div>
+                </div>
+              </div>
+
+              <!-- KOLOM QTY -->
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <div class="pdf-th" style="height:34px;">QTY</div>
+                <div class="pdf-tall-col" id="pdfQty" style="flex:1;">-</div>
+              </div>
+
+              <!-- KOLOM HARGA SATUAN -->
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <div class="pdf-th" style="height:34px;">Harga<br>Satuan</div>
+                <div class="pdf-tall-col" id="pdfHarga" style="flex:1;">-</div>
+              </div>
+
+              <!-- KOLOM JUMLAH -->
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <div class="pdf-th" style="height:34px;">Jumlah</div>
+                <div class="pdf-tall-col" id="pdfJumlah" style="flex:1;">-</div>
+              </div>
+            </div>
+
+            <!-- SUB TOTAL, DISKON, TOTAL -->
+            <div class="pdf-summary-row">
+              <div class="pdf-sum-box">
+                <div class="pdf-sum-line"><span>Sub Total :</span><span id="pdfSubtotal">0</span></div>
+                <div class="pdf-sum-line"><span>Diskon :</span><span id="pdfDiskon">0</span></div>
+              </div>
+              <div class="pdf-total-box">
+                TOTAL : <span id="pdfTotal" style="margin-left:4px;">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- TANDA TANGAN PELANGGAN & KASIR -->
+          <div class="pdf-signatures-row">
+            <div class="pdf-sig-box">
+              <div class="pdf-sig-img-wrap">
+                <img id="imgTtdPelanggan" src="" alt="" style="display:none;" />
+              </div>
+              <div class="pdf-sig-label">Tanda tangan pelanggan.</div>
+            </div>
+            <div class="pdf-sig-box">
+              <div class="pdf-sig-img-wrap">
+                <img id="imgTtdKasir" src="" alt="" style="display:none;" />
+              </div>
+              <div class="pdf-sig-label">Tanda tangan kasir.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pdf-toolbar">
+          <button class="btn-cancel-text btn-anim" style="flex:1;" onclick="switchView('viewForm')">← Edit</button>
+          <button class="btn-cancel-text btn-anim" style="flex:1;" onclick="switchView('viewHome')">Beranda</button>
+          <button class="btn-ttd-solid btn-anim" style="flex:1.4;" onclick="downloadPDF()">Unduh Ulang PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 1: SETTINGS WARNA BLUR (GAMBAR 2) ================= -->
+    <div class="modal-overlay" id="modalSettings" onclick="closeModalOnBg(event, 'modalSettings')">
+      <div class="theme-modal-wrap">
+        <button class="btn-back-pill btn-anim" onclick="closeModal('modalSettings')">Back</button>
+        <div class="theme-selector-bar">
+          <div class="theme-indicator-circle"></div>
+          <button class="color-swatch btn-anim" style="background:#1ce3f0;" onclick="setTheme('theme-cyan')" title="Tema Cyan"></button>
+          <button class="color-swatch btn-anim" style="background:#e60000;" onclick="setTheme('')" title="Tema Merah Honda"></button>
+          <button class="color-swatch btn-anim" style="background:#00e01e;" onclick="setTheme('theme-green')" title="Tema Hijau"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 2: BUAT PROYEK BARU (GAMBAR 3) ================= -->
+    <div class="modal-overlay" id="modalCreate" onclick="closeModalOnBg(event, 'modalCreate')">
+      <div class="dialog-pill-box">
+        <div class="pill-input-container">
+          <div class="pill-main-bar">
+            <input type="text" id="newProjectNameInput" placeholder="proyek kamu..." />
+          </div>
+          <div class="circle-badge-right"></div>
+        </div>
+        <button class="btn-yes-outline btn-anim" onclick="confirmCreateProject(true)">Yes</button>
+        <div class="dialog-sub-actions">
+          <button class="btn-cancel-text btn-anim" onclick="confirmCreateProject(false)">Pakai "PROYEK" Saja</button>
+          <button class="btn-cancel-text btn-anim" onclick="closeModal('modalCreate')">Batal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 3: RENAME PROYEK BLUR (GAMBAR 4) ================= -->
+    <div class="modal-overlay" id="modalRename" onclick="closeModalOnBg(event, 'modalRename')">
+      <div class="dialog-pill-box">
+        <div class="pill-input-container">
+          <div class="circle-badge-left"></div>
+          <div class="pill-main-bar" style="padding-left: 48px;">
+            <input type="text" id="renameInput" placeholder="Nama baru..." />
+          </div>
+        </div>
+        <button class="btn-yes-outline btn-anim" onclick="confirmRename()">Yes</button>
+        <button class="btn-cancel-text btn-anim" onclick="closeModal('modalRename')">Batal</button>
+      </div>
+    </div>
+
+    <!-- ================= MODAL 4: DELETE PROYEK BLUR (GAMBAR 5) ================= -->
+    <div class="modal-overlay" id="modalDelete" onclick="closeModalOnBg(event, 'modalDelete')">
+      <div class="dialog-pill-box">
+        <div class="pill-input-container">
+          <div class="circle-badge-left"></div>
+          <div class="pill-main-bar" style="padding-left: 48px;">
+            klik yes untuk hapus
+          </div>
+        </div>
+        <button class="btn-yes-outline btn-anim" onclick="confirmDelete()">Yes</button>
+        <button class="btn-cancel-text btn-anim" onclick="closeModal('modalDelete')">Batal</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ================= STATE & STORAGE =================
+    let projects = JSON.parse(localStorage.getItem('honda_nota_projects')) || [
+      {
+        id: 'proj-default-1',
+        title: 'PROYEK',
+        nama: 'Budi Santoso',
+        nopol: 'Z 4521 DA',
+        motor: 'Vario 150',
+        uraian: 'Servis Lengkap & Tune Up Injeksi, Ganti Oli MPX2 + Gardan',
+        qty: '1',
+        harga: '125000',
+        jumlah: '125000',
+        subtotal: '125000',
+        diskon: '5000',
+        total: '120000',
+        ttdPelanggan: '',
+        ttdKasir: ''
+      }
+    ];
+
+    let activeProjectId = projects[0]?.id || null;
+    let targetActionId = null;
+
+    function saveToStorage() {
+      localStorage.setItem('honda_nota_projects', JSON.stringify(projects));
+    }
+
+    // ================= HELPER PARSE URAIAN PEKERJAAN =================
+    // Memecah kalimat uraian berdasarkan koma atau baris baru (Enter),
+    // atau membungkus kalimat super panjang otomatis ke baris berikutnya agar muat rapi di tabel.
+    function parseUraianItems(rawText) {
+      if (!rawText || !rawText.trim()) return [];
+      const rawParts = rawText
+        .split(/[\n,]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      // Jika user menulis 1 kalimat sangat panjang tanpa koma (> 55 karakter), pecah per kata ke baris berikutnya
+      if (rawParts.length === 1 && rawParts[0].length > 55) {
+        const words = rawParts[0].split(/\s+/);
+        const chunks = [];
+        let currentLine = '';
+        words.forEach(w => {
+          if ((currentLine + ' ' + w).trim().length <= 42) {
+            currentLine = (currentLine + ' ' + w).trim();
+          } else {
+            if (currentLine) chunks.push(currentLine);
+            currentLine = w;
+          }
+        });
+        if (currentLine) chunks.push(currentLine);
+        return chunks.slice(0, 5);
+      }
+
+      return rawParts.slice(0, 5);
+    }
+
+    // ================= TEMA WARNA (GAMBAR 2) =================
+    function setTheme(themeClass) {
+      document.body.className = themeClass;
+      localStorage.setItem('honda_nota_theme', themeClass);
+    }
+    const savedTheme = localStorage.getItem('honda_nota_theme');
+    if (savedTheme) document.body.className = savedTheme;
+
+    // ================= MODAL CONTROLS =================
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    function closeModalOnBg(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
+    // ================= NAVIGASI VIEW & SCROLLBAR KIRI =================
+    let currentViewId = 'viewHome';
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+      currentViewId = viewId;
+
+      const track = document.getElementById('leftScrollTrack');
+      const topDecor = document.getElementById('topCornerDecor');
+
+      if (viewId === 'viewPdf') {
+        track.style.display = 'none';
+        topDecor.style.display = 'none';
+      } else {
+        track.style.display = 'block';
+        topDecor.style.display = 'block';
+        if (viewId === 'viewHome') {
+          track.classList.remove('full-height');
+        } else {
+          track.classList.add('full-height');
+        }
+      }
+      updateLeftScrollThumb();
+    }
+
+    function restartApp() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('homeScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
+      renderProjects();
+      switchView('viewHome');
+    }
+
+    // SINKRONISASI GARIS SCROLL KIRI DENGAN AREA SCROLL AKTIF
+    const homeScrollArea = document.getElementById('homeScrollArea');
+    const formScrollArea = document.getElementById('formScrollArea');
+    const leftScrollTrack = document.getElementById('leftScrollTrack');
+    const leftScrollThumb = document.getElementById('leftScrollThumb');
+
+    function getActiveScroller() {
+      if (currentViewId === 'viewHome') return homeScrollArea;
+      if (currentViewId === 'viewForm') return formScrollArea;
+      return null;
+    }
+
+    function updateLeftScrollThumb() {
+      const scroller = getActiveScroller();
+      if (!scroller) {
+        leftScrollThumb.style.top = '0px';
+        return;
+      }
+      const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+      if (maxScroll <= 0) {
+        leftScrollThumb.style.top = '0px';
+        return;
+      }
+      const ratio = scroller.scrollTop / maxScroll;
+      const maxThumbTop = leftScrollTrack.clientHeight - leftScrollThumb.clientHeight - 4;
+      leftScrollThumb.style.top = `${ratio * maxThumbTop}px`;
+    }
+
+    homeScrollArea.addEventListener('scroll', updateLeftScrollThumb);
+    formScrollArea.addEventListener('scroll', updateLeftScrollThumb);
+
+    let isDraggingScroll = false;
+    function handleTrackScrub(clientY) {
+      const scroller = getActiveScroller();
+      if (!scroller) return;
+      const rect = leftScrollTrack.getBoundingClientRect();
+      const clickY = Math.max(0, Math.min(clientY - rect.top - leftScrollThumb.clientHeight / 2, rect.height - leftScrollThumb.clientHeight));
+      const ratio = clickY / (rect.height - leftScrollThumb.clientHeight);
+      scroller.scrollTop = ratio * (scroller.scrollHeight - scroller.clientHeight);
+    }
+
+    leftScrollTrack.addEventListener('mousedown', (e) => {
+      isDraggingScroll = true;
+      handleTrackScrub(e.clientY);
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (isDraggingScroll) handleTrackScrub(e.clientY);
+    });
+    window.addEventListener('mouseup', () => {
+      isDraggingScroll = false;
+    });
+
+    leftScrollTrack.addEventListener('touchstart', (e) => {
+      isDraggingScroll = true;
+      handleTrackScrub(e.touches[0].clientY);
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (isDraggingScroll) handleTrackScrub(e.touches[0].clientY);
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      isDraggingScroll = false;
+    });
+
+    // ================= RENDER DAFTAR PROYEK BERANDA (GAMBAR 1) =================
+    function renderProjects() {
+      const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = projects.filter(p =>
+        p.title.toLowerCase().includes(keyword) ||
+        (p.nama && p.nama.toLowerCase().includes(keyword)) ||
+        (p.nopol && p.nopol.toLowerCase().includes(keyword))
+      );
+
+      if (filtered.length === 0) {
+        homeScrollArea.innerHTML = `<div style="text-align:center; color:#999; margin-top:60px; font-weight:600;">Tidak ada proyek ditemukan.<br>Tekan tombol + di bawah untuk membuat baru.</div>`;
+        updateLeftScrollThumb();
+        return;
+      }
+
+      homeScrollArea.innerHTML = filtered.map(proj => {
+        const items = parseUraianItems(proj.uraian);
+        return `
+          <div class="project-item">
+            <div class="project-top-row">
+              <div class="project-pill-wrapper btn-anim" onclick="openProjectForm('${proj.id}')">
+                <div class="project-circle"></div>
+                <div class="project-pill">${escapeHtml(proj.title)}</div>
+              </div>
+              <div class="project-actions">
+                <button class="btn-mini btn-anim" onclick="openRenameModal('${proj.id}')">Rename</button>
+                <button class="btn-mini btn-anim" onclick="openDeleteModal('${proj.id}')">Delete</button>
+              </div>
+            </div>
+
+            <div class="nota-preview-card btn-anim" onclick="openProjectForm('${proj.id}')">
+              <div class="preview-grid">
+                <div>
+                  <div class="preview-banner">
+                    <svg class="wing-decor" viewBox="0 0 64 48">
+                      <path d="M4,6 L58,6 L50,13 L14,13 Z M6,17 L48,17 L41,23 L16,23 Z M10,27 L38,27 L32,33 L18,33 Z" />
+                    </svg>
+                    BENGKEL HONDA
+                  </div>
+                  <div class="preview-subbanner">
+                    <span class="line"></span>
+                    <span>Nota Servis</span>
+                    <span class="line"></span>
+                  </div>
+                  <div class="preview-customer">
+                    <div class="title-row">
+                      <span class="txt-red">Data</span>
+                      <span class="box-dark">Pelanggan</span>
+                    </div>
+                    <div class="nama-row">
+                      <span>Nama</span>
+                      <span>: ${escapeHtml(proj.nama || '')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="preview-mini-table">
+                  <div>NO</div><div>Uraian</div>
+                  <div>1</div><div>${escapeHtml(items[0] || '')}</div>
+                  <div>2</div><div>${escapeHtml(items[1] || '')}</div>
+                  <div>3</div><div>${escapeHtml(items[2] || '')}</div>
+                  <div>4</div><div>${escapeHtml(items[3] || '')}</div>
+                  <div>5</div><div>${escapeHtml(items[4] || '')}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      setTimeout(updateLeftScrollThumb, 50);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ================= BUAT PROYEK BARU (GAMBAR 3) =================
+    function openCreateModal() {
+      document.getElementById('newProjectNameInput').value = '';
+      openModal('modalCreate');
+    }
+
+    function confirmCreateProject(useCustomName) {
+      const customVal = document.getElementById('newProjectNameInput').value.trim();
+      const finalTitle = (useCustomName && customVal) ? customVal : 'PROYEK';
+
+      const newProj = {
+        id: 'proj-' + Date.now(),
+        title: finalTitle,
+        nama: '',
+        nopol: '',
+        motor: '',
+        uraian: '',
+        qty: '',
+        harga: '',
+        jumlah: '',
+        subtotal: '',
+        diskon: '',
+        total: '',
+        ttdPelanggan: '',
+        ttdKasir: ''
+      };
+
+      projects.unshift(newProj);
+      saveToStorage();
+      renderProjects();
+      closeModal('modalCreate');
+      openProjectForm(newProj.id);
+    }
+
+    // ================= RENAME (GAMBAR 4) & DELETE (GAMBAR 5) =================
+    function openRenameModal(id) {
+      targetActionId = id;
+      const proj = projects.find(p => p.id === id);
+      document.getElementById('renameInput').value = proj ? proj.title : '';
+      openModal('modalRename');
+    }
+
+    function confirmRename() {
+      const newName = document.getElementById('renameInput').value.trim();
+      if (newName && targetActionId) {
+        const proj = projects.find(p => p.id === targetActionId);
+        if (proj) proj.title = newName;
+        saveToStorage();
+        renderProjects();
+      }
+      closeModal('modalRename');
+    }
+
+    function openDeleteModal(id) {
+      targetActionId = id;
+      openModal('modalDelete');
+    }
+
+    function confirmDelete() {
+      if (targetActionId) {
+        projects = projects.filter(p => p.id !== targetActionId);
+        saveToStorage();
+        renderProjects();
+      }
+      closeModal('modalDelete');
+    }
+
+    // ================= FORM INPUT NOTA (GAMBAR 6 & 7) =================
+    function openProjectForm(id) {
+      activeProjectId = id;
+      const proj = projects.find(p => p.id === id);
+      if (!proj) return;
+
+      document.getElementById('inpNama').value = proj.nama || '';
+      document.getElementById('inpNopol').value = proj.nopol || '';
+      document.getElementById('inpMotor').value = proj.motor || '';
+      document.getElementById('inpUraian').value = proj.uraian || '';
+      document.getElementById('inpQty').value = proj.qty || '';
+      document.getElementById('inpHarga').value = proj.harga || '';
+      document.getElementById('inpJumlah').value = proj.jumlah || '';
+      document.getElementById('inpSubtotal').value = proj.subtotal || '';
+      document.getElementById('inpDiskon').value = proj.diskon || '';
+      document.getElementById('inpTotal').value = proj.total || '';
+
+      loadSignatureToCanvas('canvasPelanggan', proj.ttdPelanggan);
+      loadSignatureToCanvas('canvasKasir', proj.ttdKasir);
+
+      formScrollArea.scrollTop = 0;
+      switchView('viewForm');
+    }
+
+    function syncFormData() {
+      const proj = projects.find(p => p.id === activeProjectId);
+      if (!proj) return;
+      proj.nama = document.getElementById('inpNama').value;
+      proj.nopol = document.getElementById('inpNopol').value;
+      proj.motor = document.getElementById('inpMotor').value;
+      proj.uraian = document.getElementById('inpUraian').value;
+      proj.qty = document.getElementById('inpQty').value;
+      proj.harga = document.getElementById('inpHarga').value;
+      proj.jumlah = document.getElementById('inpJumlah').value;
+      proj.subtotal = document.getElementById('inpSubtotal').value;
+      proj.diskon = document.getElementById('inpDiskon').value;
+      proj.total = document.getElementById('inpTotal').value;
+      saveToStorage();
+      renderProjects();
+    }
+
+    function calculateNota(manualJumlah = false) {
+      const qty = parseFloat(document.getElementById('inpQty').value) || 0;
+      const harga = parseFloat(document.getElementById('inpHarga').value) || 0;
+      let jumlah = parseFloat(document.getElementById('inpJumlah').value) || 0;
+
+      if (!manualJumlah && qty > 0 && harga > 0) {
+        jumlah = qty * harga;
+        document.getElementById('inpJumlah').value = jumlah;
+      }
+      document.getElementById('inpSubtotal').value = jumlah;
+      calculateTotalOnly();
+    }
+
+    function calculateTotalOnly() {
+      const sub = parseFloat(document.getElementById('inpSubtotal').value) || 0;
+      const disk = parseFloat(document.getElementById('inpDiskon').value) || 0;
+      const total = Math.max(0, sub - disk);
+      document.getElementById('inpTotal').value = total;
+      syncFormData();
+    }
+
+    // ================= KANVAS TANDA TANGAN (GAMBAR 8) =================
+    function setupSignatureCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        if (rect.width === 0) return;
+        const tempData = canvas.toDataURL();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        ctx.lineWidth = 2.8;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111111';
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = tempData;
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      setTimeout(resizeCanvas, 200);
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      function startDraw(e) {
+        if (canvas.width !== canvas.parentElement.clientWidth) {
+          canvas.width = canvas.parentElement.clientWidth;
+          canvas.height = canvas.parentElement.clientHeight;
+          ctx.lineWidth = 2.8;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#111111';
+        }
+        drawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function endDraw() {
+        if (!drawing) return;
+        drawing = false;
+        saveCurrentSignatures();
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      window.addEventListener('mouseup', endDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', endDraw);
+    }
+
+    function clearCanvas(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      saveCurrentSignatures();
+    }
+
+    function isCanvasBlank(canvas) {
+      const blank = document.createElement('canvas');
+      blank.width = canvas.width;
+      blank.height = canvas.height;
+      return canvas.toDataURL() === blank.toDataURL();
+    }
+
+    function saveCurrentSignatures() {
+      const proj = projects.find(p => p.id === activeProjectId);
+      if (!proj) return;
+      const cPel = document.getElementById('canvasPelanggan');
+      const cKas = document.getElementById('canvasKasir');
+      proj.ttdPelanggan = isCanvasBlank(cPel) ? '' : cPel.toDataURL();
+      proj.ttdKasir = isCanvasBlank(cKas) ? '' : cKas.toDataURL();
+      saveToStorage();
+    }
+
+    function loadSignatureToCanvas(canvasId, dataUrl) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!dataUrl) return;
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = canvas.parentElement.clientWidth || 300;
+        canvas.height = canvas.parentElement.clientHeight || 195;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = dataUrl;
+    }
+
+    // ================= CETAK LANGSUNG JADI PDF (GAMBAR 9) =================
+    function saveSignaturesAndDirectPdf() {
+      saveCurrentSignatures();
+      triggerDirectPdf();
+    }
+
+    function triggerDirectPdf() {
+      populatePdfSheet();
+      switchView('viewPdf');
+
+      // Tampilkan notifikasi proses unduh dan langsung generate PDF
+      const toast = document.getElementById('pdfToast');
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        downloadPDF().then(() => {
+          setTimeout(() => toast.classList.remove('show'), 1800);
+        });
+      }, 320);
+    }
+
+    function formatRupiah(val) {
+      const num = parseFloat(val);
+      if (isNaN(num) || num === 0) return val || '-';
+      return num.toLocaleString('id-ID');
+    }
+
+    function populatePdfSheet() {
+      syncFormData();
+      const proj = projects.find(p => p.id === activeProjectId);
+      if (!proj) return;
+
+      document.getElementById('pdfNama').textContent = proj.nama || '-';
+      document.getElementById('pdfNopol').textContent = proj.nopol || '-';
+      document.getElementById('pdfMotor').textContent = proj.motor || '-';
+
+      const items = parseUraianItems(proj.uraian);
+      const uraianHtml = [0, 1, 2, 3, 4].map(i => {
+        const text = items[i] || '';
+        let sizeClass = '';
+        if (text.length > 48) {
+          sizeClass = 'text-long';
+        } else if (text.length > 26) {
+          sizeClass = 'text-medium';
+        }
+        return `<div class="pdf-uraian-cell ${sizeClass}">${escapeHtml(text)}</div>`;
+      }).join('');
+      document.getElementById('pdfUraianList').innerHTML = uraianHtml;
+
+      document.getElementById('pdfQty').textContent = proj.qty || '-';
+      document.getElementById('pdfHarga').textContent = formatRupiah(proj.harga);
+      document.getElementById('pdfJumlah').textContent = formatRupiah(proj.jumlah);
+      document.getElementById('pdfSubtotal').textContent = formatRupiah(proj.subtotal || '0');
+      document.getElementById('pdfDiskon').textContent = formatRupiah(proj.diskon || '0');
+      document.getElementById('pdfTotal').textContent = formatRupiah(proj.total || '0');
+
+      const imgPel = document.getElementById('imgTtdPelanggan');
+      if (proj.ttdPelanggan) {
+        imgPel.src = proj.ttdPelanggan;
+        imgPel.style.display = 'block';
+      } else {
+        imgPel.style.display = 'none';
+      }
+
+      const imgKas = document.getElementById('imgTtdKasir');
+      if (proj.ttdKasir) {
+        imgKas.src = proj.ttdKasir;
+        imgKas.style.display = 'block';
+      } else {
+        imgKas.style.display = 'none';
+      }
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('nota-pdf-sheet');
+      const proj = projects.find(p => p.id === activeProjectId);
+      const filename = `Nota_${(proj?.title || 'Bengkel_Honda').replace(/\s+/g, '_')}.pdf`;
+
+      const opt = {
+        margin: 0,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: [90, 160], orientation: 'portrait' } // Rasio tepat 9:16
+      };
+
+      return html2pdf().set(opt).from(element).save();
+    }
+
+    // INIT
+    setupSignatureCanvas('canvasPelanggan');
+    setupSignatureCanvas('canvasKasir');
+    renderProjects();
+  </script>
+</body>
+</html>
