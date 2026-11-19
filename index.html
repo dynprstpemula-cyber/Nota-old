@@ -79,8 +79,8 @@
       position: absolute;
       top: 0;
       right: 0;
-      width: 280px;
-      height: 110px;
+      width: 315px;
+      height: 135px;
       z-index: 20;
       pointer-events: none;
     }
@@ -140,7 +140,7 @@
 
     /* SEARCH BAR DIAM DI BERANDA */
     .home-header {
-      padding: 68px 28px 14px 44px;
+      padding: 86px 46px 14px 68px;
       z-index: 15;
       background: transparent;
     }
@@ -149,16 +149,16 @@
       align-items: center;
       border: 2.5px solid var(--primary-dark);
       border-radius: 30px;
-      padding: 8px 16px;
+      padding: 7px 14px;
       background: #fff;
-      gap: 10px;
+      gap: 9px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       transition: border-color 0.3s ease;
     }
     .search-box svg {
       width: 22px;
       height: 22px;
-      stroke: var(--primary-dark);
+      stroke: var(--primary);
       flex-shrink: 0;
     }
     .search-box input {
@@ -178,7 +178,7 @@
     .projects-scroll-area {
       flex: 1;
       overflow-y: auto;
-      padding: 10px 24px 125px 44px;
+      padding: 6px 24px 125px 44px;
       scrollbar-width: none;
     }
     .projects-scroll-area::-webkit-scrollbar {
@@ -197,10 +197,10 @@
     /* HEADER PROYEK (PILL + TOMBOL RENAME/DELETE) */
     .project-top-row {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: space-between;
       margin-bottom: 8px;
-      gap: 6px;
+      gap: 8px;
     }
     .project-pill-wrapper {
       display: flex;
@@ -208,50 +208,52 @@
       position: relative;
       flex: 1;
       min-width: 0;
+      margin-left: -4px;
     }
     .project-circle {
-      width: 34px;
-      height: 34px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background-color: var(--primary);
       flex-shrink: 0;
       z-index: 2;
-      box-shadow: 2px 0 6px rgba(0,0,0,0.15);
+      box-shadow: 2px 0 6px rgba(0,0,0,0.12);
     }
     .project-pill {
       background-color: var(--primary-light);
       color: #fff;
       font-weight: 700;
-      font-size: 14px;
-      padding: 6px 16px 6px 22px;
-      border-radius: 0 20px 20px 0;
+      font-size: 14.5px;
+      padding: 6px 26px 6px 24px;
+      border-radius: 0 22px 22px 0;
       margin-left: -14px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
     }
 
     .project-actions {
       display: flex;
-      gap: 6px;
-      margin-top: 14px;
+      gap: 8px;
+      padding-bottom: 2px;
     }
     .btn-mini {
       background-color: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 14px;
-      padding: 4px 12px;
-      font-size: 11px;
+      border-radius: 2px;
+      padding: 3px 14px;
+      font-size: 12.5px;
       font-weight: 700;
+      letter-spacing: 0.2px;
     }
 
     /* KARTU MINI PREVIEW NOTA */
     .nota-preview-card {
       border: 2.5px solid var(--primary-dark);
-      border-radius: 12px;
+      border-radius: 14px;
       background: #fff;
       overflow: hidden;
       position: relative;
@@ -263,100 +265,112 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 38px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.96));
+      height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.97));
       pointer-events: none;
     }
     .preview-grid {
       display: grid;
-      grid-template-columns: 1fr 95px;
+      grid-template-columns: 1fr 112px;
       gap: 6px;
-      padding-right: 6px;
+      padding-right: 8px;
+      align-items: start;
     }
     .preview-banner {
       background-color: var(--primary);
       color: #fff;
       font-weight: 700;
-      font-size: 14px;
-      padding: 5px 10px 5px 52px;
-      letter-spacing: 0.5px;
+      font-size: 16.5px;
+      padding: 7px 10px 7px 66px;
+      letter-spacing: 0.6px;
       position: relative;
+      white-space: nowrap;
     }
     .wing-decor {
       position: absolute;
-      left: 6px;
-      top: 4px;
-      width: 44px;
-      height: 34px;
+      left: 4px;
+      top: 0;
+      width: 60px;
+      height: 54px;
       fill: #fff;
       stroke: var(--primary);
-      stroke-width: 1.5;
+      stroke-width: 1.4;
     }
     .preview-subbanner {
       background-color: var(--primary);
       color: #fff;
-      font-size: 11px;
+      font-size: 13.5px;
       font-weight: 700;
-      margin: 6px 0 6px 8px;
-      padding: 3px 10px;
-      border-radius: 12px;
+      margin: 10px 4px 10px 14px;
+      padding: 4px 12px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 8px;
     }
     .preview-subbanner span.line {
-      height: 1.5px;
+      height: 2px;
       background: #fff;
       flex: 1;
+      border-radius: 2px;
     }
     .preview-customer {
-      padding: 2px 10px 14px 12px;
-      font-size: 12px;
+      padding: 4px 10px 18px 18px;
+      font-size: 15px;
       font-weight: 700;
     }
     .preview-customer .title-row {
       display: flex;
       align-items: center;
-      gap: 4px;
-      margin-bottom: 4px;
+      gap: 5px;
+      margin-bottom: 6px;
     }
     .preview-customer .txt-red {
       color: var(--primary);
+      font-size: 15.5px;
     }
     .preview-customer .box-dark {
       background: #1a1a1a;
       color: #fff;
-      padding: 1px 6px;
+      padding: 1px 8px;
+      font-size: 15px;
     }
     .preview-customer .nama-row {
-      color: #b0b0b0;
-      font-size: 11px;
+      color: #b8b8b8;
+      font-size: 14px;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 14px;
+      padding-left: 8px;
     }
 
     /* TABEL MINI DI KANAN KARTU BERANDA */
     .preview-mini-table {
       background: var(--primary);
-      margin-top: 4px;
-      border-radius: 6px 6px 0 0;
-      padding: 2px;
+      margin-top: 0;
+      border-radius: 0 0 8px 8px;
+      padding: 0 3px 4px 3px;
       display: grid;
-      grid-template-columns: 24px 1fr;
-      gap: 2px;
-      font-size: 9px;
+      grid-template-columns: 28px 1fr;
+      gap: 3px;
+      font-size: 11px;
       font-weight: 700;
     }
     .preview-mini-table div {
       background: #fff;
       color: var(--primary);
       text-align: center;
-      padding: 2px;
-      border-radius: 2px;
+      padding: 5px 3px;
+      border-radius: 1px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.25;
+    }
+    .preview-mini-table .mini-th {
+      padding-top: 9px;
+      padding-bottom: 6px;
     }
 
     /* NAVBAR BAWAH (DIAM DI BERANDA) */
@@ -365,7 +379,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 100px;
+      height: 102px;
       background-color: var(--primary-dark);
       display: flex;
       justify-content: space-around;
@@ -375,8 +389,8 @@
       transition: background-color 0.3s ease;
     }
     .nav-btn {
-      width: 72px;
-      height: 68px;
+      width: 74px;
+      height: 70px;
       background-color: var(--primary);
       border-radius: 14px;
       border: none;
@@ -387,11 +401,11 @@
       transition: background-color 0.3s ease, transform 0.18s ease;
     }
     .nav-btn svg {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
     }
 
-    /* ================= MODAL BLUR (GAMBAR 2, 3, 4, 5) ================= */
+    /* ================= MODAL BLUR ================= */
     .modal-overlay {
       position: absolute;
       inset: 0;
@@ -414,7 +428,6 @@
       to { opacity: 1; backdrop-filter: blur(10px); }
     }
 
-    /* GAMBAR 2: SETTINGS PILIH TEMA WARNA */
     .theme-modal-wrap {
       display: flex;
       flex-direction: column;
@@ -456,7 +469,6 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.18);
     }
 
-    /* GAMBAR 3, 4, 5: DIALOG PILL DENGAN LINGKARAN */
     .dialog-pill-box {
       display: flex;
       flex-direction: column;
@@ -541,7 +553,7 @@
       font-weight: 700;
     }
 
-    /* ================= GAMBAR 6 & 7: FORM INPUT NOTA ================= */
+    /* ================= FORM INPUT NOTA ================= */
     .form-scroll-container {
       flex: 1;
       overflow-y: auto;
@@ -630,7 +642,7 @@
       text-align: center;
     }
 
-    /* ================= GAMBAR 8: HALAMAN TANDA TANGAN ================= */
+    /* ================= HALAMAN TANDA TANGAN ================= */
     .ttd-view-content {
       flex: 1;
       padding: 62px 24px 24px 44px;
@@ -678,7 +690,7 @@
       margin-top: 8px;
     }
 
-    /* ================= GAMBAR 9: PREVIEW & CETAK PDF (9:16) ================= */
+    /* ================= PREVIEW & CETAK PDF (9:16) ================= */
     .pdf-view-wrapper {
       flex: 1;
       background: #f4f4f5;
@@ -689,7 +701,6 @@
       padding: 14px;
       overflow-y: auto;
     }
-    /* KERTAS NOTA RASIO 9:16 PANJANG */
     #nota-pdf-sheet {
       width: 100%;
       max-width: 360px;
@@ -757,7 +768,6 @@
       color: var(--primary);
     }
 
-    /* TABEL NOTA PANJANG (GAMBAR 9) - RESPONSIF UNTUK KALIMAT PANJANG */
     .pdf-table-container {
       background-color: var(--primary);
       padding: 5px;
@@ -826,7 +836,6 @@
       white-space: normal;
       overflow: hidden;
     }
-    /* Penyesuaian ukuran font otomatis jika kalimat uraian panjang */
     .pdf-uraian-cell.text-medium {
       font-size: 9px;
       line-height: 1.12;
@@ -883,7 +892,6 @@
       text-align: center;
     }
 
-    /* TANDA TANGAN BAWAH DI PDF */
     .pdf-signatures-row {
       display: flex;
       justify-content: space-between;
@@ -951,9 +959,10 @@
     <div class="pdf-toast" id="pdfToast">Mengunduh PDF Nota Servis...</div>
 
     <!-- ORNAMEN SUDUT KANAN ATAS -->
-    <svg class="top-corner-graphic" id="topCornerDecor" viewBox="0 0 300 120" preserveAspectRatio="none">
-      <path d="M55,0 L300,0 L300,115 L268,115 L254,92 L180,55 L195,68 L72,48 Z" />
-      <polygon points="242,40 278,68 300,50 300,34 276,52" fill="#ffffff" />
+    <svg class="top-corner-graphic" id="topCornerDecor" viewBox="0 0 320 135" preserveAspectRatio="none">
+      <path d="M52,0 L320,0 L320,128 L292,118 L272,88 L190,46 L205,62 L76,42 Z" />
+      <polygon points="244,44 278,76 320,56 320,38 278,58" fill="#ffffff" />
+      <polygon points="282,78 320,104 320,86 296,68" fill="#ffffff" />
     </svg>
 
     <!-- GARIS SCROLL KIRI -->
@@ -961,11 +970,11 @@
       <div class="left-scroll-thumb" id="leftScrollThumb"></div>
     </div>
 
-    <!-- ================= VIEW 1: BERANDA (GAMBAR 1) ================= -->
+    <!-- ================= VIEW 1: BERANDA ================= -->
     <div class="view active" id="viewHome">
       <div class="home-header">
         <div class="search-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
@@ -986,7 +995,7 @@
           </svg>
         </button>
 
-        <!-- LOGO SETTINGS (GAMBAR 2) -->
+        <!-- LOGO SETTINGS -->
         <button class="nav-btn btn-anim" onclick="openModal('modalSettings')" title="Pengaturan Tema">
           <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -994,7 +1003,7 @@
           </svg>
         </button>
 
-        <!-- LOGO TAMBAH (GAMBAR 3) -->
+        <!-- LOGO TAMBAH -->
         <button class="nav-btn btn-anim" onclick="openCreateModal()" title="Buat Proyek Baru">
           <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2">
             <path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3z" />
@@ -1003,10 +1012,9 @@
       </div>
     </div>
 
-    <!-- ================= VIEW 2: FORM INPUT NOTA (GAMBAR 6 & 7) ================= -->
+    <!-- ================= VIEW 2: FORM INPUT NOTA ================= -->
     <div class="view" id="viewForm">
       <div class="form-scroll-container" id="formScrollArea">
-        <!-- BAGIAN GAMBAR 6 -->
         <div class="form-group-pill">
           <div class="form-label-row">
             <div class="label-circle"></div>
@@ -1047,7 +1055,6 @@
           <input type="number" class="form-input-box" id="inpQty" placeholder="1" oninput="calculateNota()" />
         </div>
 
-        <!-- BAGIAN GAMBAR 7 (DI-SCROLL KE BAWAH) -->
         <div class="form-group-pill">
           <div class="form-label-row">
             <div class="label-circle"></div>
@@ -1088,19 +1095,18 @@
           <input type="number" class="form-input-box" id="inpTotal" placeholder="0" readonly />
         </div>
 
-        <!-- TOMBOL BAWAH GAMBAR 7 -->
         <div class="form-bottom-buttons">
           <button class="btn-ttd-solid btn-anim" onclick="switchView('viewSignature')">Tanda tangan</button>
           <button class="btn-pdf-outline btn-anim" onclick="triggerDirectPdf()">Cetak PDF</button>
         </div>
 
         <div style="margin-top: 14px; text-align: center;">
-          <button class="btn-cancel-text btn-anim" onclick="switchView('viewHome')">← Simpan & Kembali ke Beranda</button>
+          <button class="btn-cancel-text btn-anim" onclick="goBack()">← Simpan & Kembali ke Beranda</button>
         </div>
       </div>
     </div>
 
-    <!-- ================= VIEW 3: TANDA TANGAN (GAMBAR 8) ================= -->
+    <!-- ================= VIEW 3: TANDA TANGAN ================= -->
     <div class="view" id="viewSignature">
       <div class="ttd-view-content">
         <div class="ttd-section">
@@ -1126,13 +1132,13 @@
         </div>
 
         <div class="ttd-footer-actions">
-          <button class="btn-cancel-text btn-anim" onclick="switchView('viewForm')">← Kembali</button>
+          <button class="btn-cancel-text btn-anim" onclick="goBack()">← Kembali</button>
           <button class="btn-pdf-outline btn-anim" style="max-width: 165px;" onclick="saveSignaturesAndDirectPdf()">Cetak PDF</button>
         </div>
       </div>
     </div>
 
-    <!-- ================= VIEW 4: TABEL PDF 9:16 (GAMBAR 9) ================= -->
+    <!-- ================= VIEW 4: TABEL PDF 9:16 ================= -->
     <div class="view" id="viewPdf">
       <div class="pdf-view-wrapper">
         <div id="nota-pdf-sheet">
@@ -1157,10 +1163,8 @@
             </div>
           </div>
 
-          <!-- TABEL NOTA PANJANG -->
           <div class="pdf-table-container">
             <div class="pdf-table-grid">
-              <!-- KOLOM NO -->
               <div style="display:flex; flex-direction:column; gap:4px;">
                 <div class="pdf-th" style="height:34px;">NO</div>
                 <div class="pdf-no-col" id="pdfNoList">
@@ -1172,7 +1176,6 @@
                 </div>
               </div>
 
-              <!-- KOLOM URAIAN PEKERJAAN -->
               <div style="display:flex; flex-direction:column; gap:4px; min-width:0;">
                 <div class="pdf-th" style="height:34px;">Uraian Pekerjaan</div>
                 <div class="pdf-uraian-col" id="pdfUraianList">
@@ -1184,26 +1187,22 @@
                 </div>
               </div>
 
-              <!-- KOLOM QTY -->
               <div style="display:flex; flex-direction:column; gap:4px;">
                 <div class="pdf-th" style="height:34px;">QTY</div>
                 <div class="pdf-tall-col" id="pdfQty" style="flex:1;">-</div>
               </div>
 
-              <!-- KOLOM HARGA SATUAN -->
               <div style="display:flex; flex-direction:column; gap:4px;">
                 <div class="pdf-th" style="height:34px;">Harga<br>Satuan</div>
                 <div class="pdf-tall-col" id="pdfHarga" style="flex:1;">-</div>
               </div>
 
-              <!-- KOLOM JUMLAH -->
               <div style="display:flex; flex-direction:column; gap:4px;">
                 <div class="pdf-th" style="height:34px;">Jumlah</div>
                 <div class="pdf-tall-col" id="pdfJumlah" style="flex:1;">-</div>
               </div>
             </div>
 
-            <!-- SUB TOTAL, DISKON, TOTAL -->
             <div class="pdf-summary-row">
               <div class="pdf-sum-box">
                 <div class="pdf-sum-line"><span>Sub Total :</span><span id="pdfSubtotal">0</span></div>
@@ -1215,7 +1214,6 @@
             </div>
           </div>
 
-          <!-- TANDA TANGAN PELANGGAN & KASIR -->
           <div class="pdf-signatures-row">
             <div class="pdf-sig-box">
               <div class="pdf-sig-img-wrap">
@@ -1240,7 +1238,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL 1: SETTINGS WARNA BLUR (GAMBAR 2) ================= -->
+    <!-- ================= MODAL 1: SETTINGS WARNA BLUR ================= -->
     <div class="modal-overlay" id="modalSettings" onclick="closeModalOnBg(event, 'modalSettings')">
       <div class="theme-modal-wrap">
         <button class="btn-back-pill btn-anim" onclick="closeModal('modalSettings')">Back</button>
@@ -1253,7 +1251,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL 2: BUAT PROYEK BARU (GAMBAR 3) ================= -->
+    <!-- ================= MODAL 2: BUAT PROYEK BARU ================= -->
     <div class="modal-overlay" id="modalCreate" onclick="closeModalOnBg(event, 'modalCreate')">
       <div class="dialog-pill-box">
         <div class="pill-input-container">
@@ -1270,7 +1268,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL 3: RENAME PROYEK BLUR (GAMBAR 4) ================= -->
+    <!-- ================= MODAL 3: RENAME PROYEK BLUR ================= -->
     <div class="modal-overlay" id="modalRename" onclick="closeModalOnBg(event, 'modalRename')">
       <div class="dialog-pill-box">
         <div class="pill-input-container">
@@ -1284,7 +1282,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL 4: DELETE PROYEK BLUR (GAMBAR 5) ================= -->
+    <!-- ================= MODAL 4: DELETE PROYEK BLUR ================= -->
     <div class="modal-overlay" id="modalDelete" onclick="closeModalOnBg(event, 'modalDelete')">
       <div class="dialog-pill-box">
         <div class="pill-input-container">
@@ -1301,21 +1299,20 @@
   </div>
 
   <script>
-    // ================= STATE & STORAGE =================
     let projects = JSON.parse(localStorage.getItem('honda_nota_projects')) || [
       {
         id: 'proj-default-1',
         title: 'PROYEK',
-        nama: 'Budi Santoso',
-        nopol: 'Z 4521 DA',
-        motor: 'Vario 150',
-        uraian: 'Servis Lengkap & Tune Up Injeksi, Ganti Oli MPX2 + Gardan',
-        qty: '1',
-        harga: '125000',
-        jumlah: '125000',
-        subtotal: '125000',
-        diskon: '5000',
-        total: '120000',
+        nama: '',
+        nopol: '',
+        motor: '',
+        uraian: '',
+        qty: '',
+        harga: '',
+        jumlah: '',
+        subtotal: '',
+        diskon: '',
+        total: '',
         ttdPelanggan: '',
         ttdKasir: ''
       }
@@ -1323,14 +1320,13 @@
 
     let activeProjectId = projects[0]?.id || null;
     let targetActionId = null;
+    let currentViewId = 'viewHome';
+    let isPopStateHandling = false;
 
     function saveToStorage() {
       localStorage.setItem('honda_nota_projects', JSON.stringify(projects));
     }
 
-    // ================= HELPER PARSE URAIAN PEKERJAAN =================
-    // Memecah kalimat uraian berdasarkan koma atau baris baru (Enter),
-    // atau membungkus kalimat super panjang otomatis ke baris berikutnya agar muat rapi di tabel.
     function parseUraianItems(rawText) {
       if (!rawText || !rawText.trim()) return [];
       const rawParts = rawText
@@ -1338,7 +1334,6 @@
         .map(s => s.trim())
         .filter(Boolean);
 
-      // Jika user menulis 1 kalimat sangat panjang tanpa koma (> 55 karakter), pecah per kata ke baris berikutnya
       if (rawParts.length === 1 && rawParts[0].length > 55) {
         const words = rawParts[0].split(/\s+/);
         const chunks = [];
@@ -1358,7 +1353,6 @@
       return rawParts.slice(0, 5);
     }
 
-    // ================= TEMA WARNA (GAMBAR 2) =================
     function setTheme(themeClass) {
       document.body.className = themeClass;
       localStorage.setItem('honda_nota_theme', themeClass);
@@ -1366,21 +1360,85 @@
     const savedTheme = localStorage.getItem('honda_nota_theme');
     if (savedTheme) document.body.className = savedTheme;
 
+    // ================= NAVIGASI TOMBOL BACK HP (HISTORY API) =================
+    function getOpenModal() {
+      return document.querySelector('.modal-overlay.active');
+    }
+
+    function pushNavState(stateObj) {
+      if (!isPopStateHandling) {
+        history.pushState(stateObj, '');
+      }
+    }
+
+    function goBack() {
+      if (history.state && (history.state.modal || history.state.view !== 'viewHome')) {
+        history.back();
+      } else {
+        const openModalEl = getOpenModal();
+        if (openModalEl) {
+          openModalEl.classList.remove('active');
+        } else if (currentViewId === 'viewSignature') {
+          applyViewVisuals('viewForm');
+        } else if (currentViewId !== 'viewHome') {
+          applyViewVisuals('viewHome');
+        }
+      }
+    }
+
+    window.addEventListener('popstate', (event) => {
+      isPopStateHandling = true;
+
+      // 1. Tutup modal jika sedang terbuka
+      const openModalEl = getOpenModal();
+      if (openModalEl) {
+        openModalEl.classList.remove('active');
+        isPopStateHandling = false;
+        return;
+      }
+
+      // 2. Ikuti state history jika ada
+      const targetView = event.state?.view;
+      if (targetView && document.getElementById(targetView)) {
+        applyViewVisuals(targetView);
+      } else {
+        // Fallback aman mundur berurutan
+        if (currentViewId === 'viewSignature') {
+          applyViewVisuals('viewForm');
+        } else if (currentViewId === 'viewForm' || currentViewId === 'viewPdf') {
+          applyViewVisuals('viewHome');
+        }
+      }
+
+      isPopStateHandling = false;
+    });
+
+    // Inisialisasi state awal saat halaman dibuka
+    history.replaceState({ view: 'viewHome', modal: null }, '');
+
     // ================= MODAL CONTROLS =================
     function openModal(id) {
       document.getElementById(id).classList.add('active');
+      pushNavState({ view: currentViewId, modal: id });
     }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
+
+    function closeModal(id, fromConfirm = false) {
+      const el = document.getElementById(id);
+      if (!el || !el.classList.contains('active')) return;
+      el.classList.remove('active');
+
+      // Bersihkan entry history modal jika ditutup lewat tombol UI (bukan tombol back HP)
+      if (!isPopStateHandling && !fromConfirm && history.state?.modal === id) {
+        history.back();
+      }
     }
+
     function closeModalOnBg(e, id) {
       if (e.target.id === id) closeModal(id);
     }
 
     // ================= NAVIGASI VIEW & SCROLLBAR KIRI =================
-    let currentViewId = 'viewHome';
-
-    function switchView(viewId) {
+    function applyViewVisuals(viewId) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
       currentViewId = viewId;
@@ -1403,14 +1461,30 @@
       updateLeftScrollThumb();
     }
 
+    function switchView(viewId, replaceHistory = false) {
+      if (currentViewId === viewId) return;
+      applyViewVisuals(viewId);
+
+      if (!isPopStateHandling) {
+        if (replaceHistory) {
+          history.replaceState({ view: viewId, modal: null }, '');
+        } else if (viewId === 'viewHome') {
+          history.replaceState({ view: 'viewHome', modal: null }, '');
+        } else {
+          pushNavState({ view: viewId, modal: null });
+        }
+      }
+    }
+
     function restartApp() {
+      document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
       document.getElementById('searchInput').value = '';
       document.getElementById('homeScrollArea').scrollTo({ top: 0, behavior: 'smooth' });
       renderProjects();
-      switchView('viewHome');
+      applyViewVisuals('viewHome');
+      history.replaceState({ view: 'viewHome', modal: null }, '');
     }
 
-    // SINKRONISASI GARIS SCROLL KIRI DENGAN AREA SCROLL AKTIF
     const homeScrollArea = document.getElementById('homeScrollArea');
     const formScrollArea = document.getElementById('formScrollArea');
     const leftScrollTrack = document.getElementById('leftScrollTrack');
@@ -1473,7 +1547,6 @@
       isDraggingScroll = false;
     });
 
-    // ================= RENDER DAFTAR PROYEK BERANDA (GAMBAR 1) =================
     function renderProjects() {
       const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
       const filtered = projects.filter(p =>
@@ -1507,8 +1580,8 @@
               <div class="preview-grid">
                 <div>
                   <div class="preview-banner">
-                    <svg class="wing-decor" viewBox="0 0 64 48">
-                      <path d="M4,6 L58,6 L50,13 L14,13 Z M6,17 L48,17 L41,23 L16,23 Z M10,27 L38,27 L32,33 L18,33 Z" />
+                    <svg class="wing-decor" viewBox="0 0 72 60">
+                      <path d="M2,2 L68,2 L58,13 L18,13 Z M5,16 L54,16 L45,26 L19,26 Z M10,29 L42,29 L35,38 L22,38 Z M16,41 L32,41 L28,48 L21,48 Z" />
                     </svg>
                     BENGKEL HONDA
                   </div>
@@ -1530,7 +1603,7 @@
                 </div>
 
                 <div class="preview-mini-table">
-                  <div>NO</div><div>Uraian</div>
+                  <div class="mini-th">NO</div><div class="mini-th">Uraian</div>
                   <div>1</div><div>${escapeHtml(items[0] || '')}</div>
                   <div>2</div><div>${escapeHtml(items[1] || '')}</div>
                   <div>3</div><div>${escapeHtml(items[2] || '')}</div>
@@ -1552,7 +1625,6 @@
       return div.innerHTML;
     }
 
-    // ================= BUAT PROYEK BARU (GAMBAR 3) =================
     function openCreateModal() {
       document.getElementById('newProjectNameInput').value = '';
       openModal('modalCreate');
@@ -1582,11 +1654,10 @@
       projects.unshift(newProj);
       saveToStorage();
       renderProjects();
-      closeModal('modalCreate');
-      openProjectForm(newProj.id);
+      closeModal('modalCreate', true);
+      openProjectForm(newProj.id, true);
     }
 
-    // ================= RENAME (GAMBAR 4) & DELETE (GAMBAR 5) =================
     function openRenameModal(id) {
       targetActionId = id;
       const proj = projects.find(p => p.id === id);
@@ -1619,8 +1690,7 @@
       closeModal('modalDelete');
     }
 
-    // ================= FORM INPUT NOTA (GAMBAR 6 & 7) =================
-    function openProjectForm(id) {
+    function openProjectForm(id, replaceHistory = false) {
       activeProjectId = id;
       const proj = projects.find(p => p.id === id);
       if (!proj) return;
@@ -1640,7 +1710,7 @@
       loadSignatureToCanvas('canvasKasir', proj.ttdKasir);
 
       formScrollArea.scrollTop = 0;
-      switchView('viewForm');
+      switchView('viewForm', replaceHistory);
     }
 
     function syncFormData() {
@@ -1681,7 +1751,6 @@
       syncFormData();
     }
 
-    // ================= KANVAS TANDA TANGAN (GAMBAR 8) =================
     function setupSignatureCanvas(canvasId) {
       const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
@@ -1789,7 +1858,6 @@
       img.src = dataUrl;
     }
 
-    // ================= CETAK LANGSUNG JADI PDF (GAMBAR 9) =================
     function saveSignaturesAndDirectPdf() {
       saveCurrentSignatures();
       triggerDirectPdf();
@@ -1799,7 +1867,6 @@
       populatePdfSheet();
       switchView('viewPdf');
 
-      // Tampilkan notifikasi proses unduh dan langsung generate PDF
       const toast = document.getElementById('pdfToast');
       toast.classList.add('show');
 
@@ -1872,13 +1939,12 @@
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: [90, 160], orientation: 'portrait' } // Rasio tepat 9:16
+        jsPDF: { unit: 'mm', format: [90, 160], orientation: 'portrait' }
       };
 
       return html2pdf().set(opt).from(element).save();
     }
 
-    // INIT
     setupSignatureCanvas('canvasPelanggan');
     setupSignatureCanvas('canvasKasir');
     renderProjects();
