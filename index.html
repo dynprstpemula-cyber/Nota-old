@@ -673,6 +673,14 @@
       font-weight: 700;
       border-left-color: var(--primary);
     }
+    .form-input-box.total-highlight {
+      background-color: var(--surface);
+      border: 2px solid var(--primary);
+      border-left: 5px solid var(--primary);
+      color: var(--primary);
+      font-size: 17px;
+      font-weight: 700;
+    }
     .form-input-box::placeholder {
       color: var(--text-muted);
       opacity: 0.55;
@@ -1173,7 +1181,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">QTY :</div>
           </div>
-          <input type="number" class="form-input-box" id="inpQty" placeholder="1" oninput="calculateNota()" />
+          <input type="text" inputmode="numeric" class="form-input-box" id="inpQty" placeholder="1" />
         </div>
 
         <div class="form-group-pill">
@@ -1181,7 +1189,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">Harga satuan :</div>
           </div>
-          <input type="number" class="form-input-box" id="inpHarga" placeholder="masukkan harga satuan" oninput="calculateNota()" />
+          <input type="text" inputmode="numeric" class="form-input-box" id="inpHarga" placeholder="masukkan harga satuan" />
         </div>
 
         <div class="form-group-pill">
@@ -1189,7 +1197,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">Jumlah :</div>
           </div>
-          <input type="number" class="form-input-box auto-calculated" id="inpJumlah" placeholder="Otomatis / isi manual" oninput="calculateNota(true)" />
+          <input type="text" inputmode="numeric" class="form-input-box auto-calculated" id="inpJumlah" placeholder="Otomatis / isi manual" />
         </div>
 
         <div class="form-group-pill">
@@ -1197,7 +1205,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">Sub total :</div>
           </div>
-          <input type="number" class="form-input-box auto-calculated" id="inpSubtotal" placeholder="0" oninput="calculateTotalOnly()" />
+          <input type="text" inputmode="numeric" class="form-input-box auto-calculated" id="inpSubtotal" placeholder="0" />
         </div>
 
         <div class="form-group-pill">
@@ -1205,7 +1213,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">Diskon :</div>
           </div>
-          <input type="number" class="form-input-box" id="inpDiskon" placeholder="0" oninput="calculateTotalOnly()" />
+          <input type="text" inputmode="numeric" class="form-input-box" id="inpDiskon" placeholder="0" />
         </div>
 
         <div class="form-group-pill">
@@ -1213,7 +1221,7 @@
             <div class="label-circle"></div>
             <div class="label-pill">Total :</div>
           </div>
-          <input type="number" class="form-input-box auto-calculated" id="inpTotal" placeholder="0" readonly />
+          <input type="text" class="form-input-box total-highlight" id="inpTotal" placeholder="0" readonly />
         </div>
 
         <div class="form-bottom-buttons">
@@ -1449,6 +1457,14 @@
 
     function saveToStorage() {
       localStorage.setItem('honda_nota_projects', JSON.stringify(projects));
+    }
+
+    // Helper membaca angka bersih (aman walau user ketik titik/koma seperti 50.000)
+    function parseAngka(rawVal) {
+      if (rawVal === null || rawVal === undefined) return 0;
+      const cleaned = String(rawVal).replace(/[^0-9-]/g, '');
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
     }
 
     function parseUraianItems(rawText) {
@@ -1822,8 +1838,13 @@
       document.getElementById('inpDiskon').value = proj.diskon || '';
       document.getElementById('inpTotal').value = proj.total || '';
 
-      if (proj.qty || proj.harga || proj.jumlah || proj.subtotal || proj.diskon) {
-        calculateNota(!proj.qty && !proj.harga && Boolean(proj.jumlah));
+      // Hitung ulang otomatis begitu form dibuka
+      if (proj.qty || proj.harga) {
+        hitungDariQtyHarga();
+      } else if (proj.jumlah) {
+        hitungDariJumlahManual();
+      } else {
+        hitungTotalAkhir();
       }
 
       loadSignatureToCanvas('canvasPelanggan', proj.ttdPelanggan);
@@ -1850,36 +1871,67 @@
       renderProjects();
     }
 
-    // ================= PERHITUNGAN OTOMATIS =================
-    function calculateNota(manualJumlah = false) {
-      const qtyRaw = document.getElementById('inpQty').value.trim();
-      const hargaRaw = document.getElementById('inpHarga').value.trim();
+    // ================= PERHITUNGAN OTOMATIS (PASTI NGITUNG TOTAL) =================
+    const inpQty = document.getElementById('inpQty');
+    const inpHarga = document.getElementById('inpHarga');
+    const inpJumlah = document.getElementById('inpJumlah');
+    const inpSubtotal = document.getElementById('inpSubtotal');
+    const inpDiskon = document.getElementById('inpDiskon');
+    const inpTotal = document.getElementById('inpTotal');
 
-      const qty = parseFloat(qtyRaw) || 0;
-      const harga = parseFloat(hargaRaw) || 0;
-      let jumlah = parseFloat(document.getElementById('inpJumlah').value) || 0;
+    // 1. Jika QTY atau Harga Satuan diubah -> hitung Jumlah, Sub Total, dan Total
+    function hitungDariQtyHarga() {
+      const qtyRaw = inpQty.value.trim();
+      const hargaRaw = inpHarga.value.trim();
+      const qty = parseAngka(qtyRaw);
+      const harga = parseAngka(hargaRaw);
 
-      if (!manualJumlah) {
+      if (hargaRaw !== '' || qtyRaw !== '') {
         const effectiveQty = (qtyRaw === '' && harga > 0) ? 1 : qty;
-        jumlah = (effectiveQty > 0 && harga > 0) ? effectiveQty * harga : 0;
-        document.getElementById('inpJumlah').value = jumlah > 0 ? jumlah : '';
+        const jumlah = effectiveQty * harga;
+        inpJumlah.value = jumlah > 0 ? String(jumlah) : '';
+        inpSubtotal.value = jumlah > 0 ? String(jumlah) : '';
+      } else {
+        inpJumlah.value = '';
+        inpSubtotal.value = '';
       }
 
-      document.getElementById('inpSubtotal').value = jumlah > 0 ? jumlah : '';
-      calculateTotalOnly();
+      hitungTotalAkhir();
     }
 
-    function calculateTotalOnly() {
-      const subRaw = document.getElementById('inpSubtotal').value.trim();
-      const diskRaw = document.getElementById('inpDiskon').value.trim();
+    // 2. Jika Jumlah diisi/diubah manual -> teruskan ke Sub Total dan hitung Total
+    function hitungDariJumlahManual() {
+      const jumlah = parseAngka(inpJumlah.value);
+      inpSubtotal.value = inpJumlah.value.trim() !== '' ? String(jumlah) : '';
+      hitungTotalAkhir();
+    }
 
-      const sub = parseFloat(subRaw) || 0;
-      const disk = parseFloat(diskRaw) || 0;
+    // 3. Jika Sub Total atau Diskon diubah -> hitung Total Akhir (Sub Total - Diskon)
+    function hitungTotalAkhir() {
+      const subRaw = inpSubtotal.value.trim();
+      const diskRaw = inpDiskon.value.trim();
+
+      const sub = parseAngka(subRaw);
+      const disk = parseAngka(diskRaw);
       const total = Math.max(0, sub - disk);
 
-      document.getElementById('inpTotal').value = (subRaw !== '' || diskRaw !== '') ? total : '';
+      if (subRaw !== '' || diskRaw !== '') {
+        inpTotal.value = String(total);
+      } else {
+        inpTotal.value = '';
+      }
+
       syncFormData();
     }
+
+    // Pasang event listener lengkap agar responsif di semua keyboard & perangkat
+    ['input', 'keyup', 'change'].forEach(evt => {
+      inpQty.addEventListener(evt, hitungDariQtyHarga);
+      inpHarga.addEventListener(evt, hitungDariQtyHarga);
+      inpJumlah.addEventListener(evt, hitungDariJumlahManual);
+      inpSubtotal.addEventListener(evt, hitungTotalAkhir);
+      inpDiskon.addEventListener(evt, hitungTotalAkhir);
+    });
 
     function setupSignatureCanvas(canvasId) {
       const canvas = document.getElementById(canvasId);
@@ -2028,13 +2080,13 @@
     }
 
     function formatRupiah(val) {
-      const num = parseFloat(val);
-      if (isNaN(num) || num === 0) return val || '-';
+      if (val === null || val === undefined || String(val).trim() === '') return '-';
+      const num = parseAngka(val);
       return num.toLocaleString('id-ID');
     }
 
     function populatePdfSheet() {
-      syncFormData();
+      hitungTotalAkhir();
       const proj = projects.find(p => p.id === activeProjectId);
       if (!proj) return;
 
